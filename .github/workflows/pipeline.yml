@@ -30,10 +30,10 @@ jobs:
       - name: E2 Tests
         run: npm run test:e2e
       - name: Trigger deployment
-        if: ${{env.CONDITION != 'true' ||  github.event_name == 'push' }}
+        if: ${{env.CONDITION != 'true' &&  github.event_name == 'push' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
   tag_release:
-    if: ${{ github.env.CONDITION != 'true' ||  github.event_name == 'push' }}
+    if: ${{ github.env.CONDITION != 'true' &&  github.event_name == 'push' }}
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
     steps:
