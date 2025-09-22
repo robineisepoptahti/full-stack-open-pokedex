@@ -86,6 +86,7 @@ jobs:
           color: "red"
           title: Build failed
       - name: Debug All Secrets
+        if: failure()
         run: |
           echo "=== DEBUGGING SECRETS ==="
           echo "Checking if WEBHOOK secret exists..."
