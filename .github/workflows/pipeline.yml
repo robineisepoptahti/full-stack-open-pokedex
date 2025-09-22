@@ -37,20 +37,49 @@ jobs:
         uses: rjstone/discord-webhook-notify@v2
         if: success()
         with:
-          webhookUrl: ${{ secrets.WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: robineisepoptahti
           details: All tests passed
           severity: info
           color: "green"
           title: Build successful, deployment triggered
-      - name: Debug Webhook URL
-        if: failure()
-        run: echo "Webhook URL found - ${{ secrets.WEBHOOK }}"
+      - name: Debug All Secrets
+        run: |
+          echo "=== DEBUGGING SECRETS ==="
+          echo "Checking if WEBHOOK secret exists..."
+          if [ -z "$WEBHOOK_VAR" ]; then
+            echo "❌ WEBHOOK secret is EMPTY or NOT SET"
+          else
+            echo "✅ WEBHOOK secret is SET"
+            echo "Length: ${#WEBHOOK_VAR} characters"
+            echo "Starts with: ${WEBHOOK_VAR:0:20}..."
+            echo "Contains 'discord': $(echo "$WEBHOOK_VAR" | grep -q "discord" && echo "YES" || echo "NO")"
+          fi
+
+          echo "Checking RENDER_SERVICE_ID..."
+          if [ -z "$SERVICE_ID" ]; then
+            echo "❌ RENDER_SERVICE_ID is EMPTY or NOT SET"
+          else
+            echo "✅ RENDER_SERVICE_ID is SET (length: ${#SERVICE_ID})"
+          fi
+
+          echo "Checking RENDER_API_KEY..."
+          if [ -z "$API_KEY" ]; then
+            echo "❌ RENDER_API_KEY is EMPTY or NOT SET"
+          else
+            echo "✅ RENDER_API_KEY is SET (length: ${#API_KEY})"
+          fi
+
+          echo "=== END DEBUG ==="
+        env:
+          WEBHOOK_VAR: ${{ secrets.DISCORD_WEBHOOK }}
+          SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          API_KEY: ${{ secrets.RENDER_API_KEY }}
       - name: Notify Failure
         uses: rjstone/discord-webhook-notify@v2
         if: failure()
         with:
-          webhookUrl: ${{ secrets.WEBHOOK }}
+          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
           username: robineisepoptahti
           details: Tests failed
           severity: info
