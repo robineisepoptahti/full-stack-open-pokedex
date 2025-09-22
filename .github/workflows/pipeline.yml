@@ -33,6 +33,27 @@ jobs:
       - name: Trigger deployment
         if: ${{env.CONDITION != 'true' &&  github.event_name == 'push' }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
+      - name: Notify
+        uses: rjstone/discord-webhook-notify@v2
+        if: success()
+        with:
+          webhookUrl: ${{ secrets.WEBHOOK }}
+          username: robineisepoptahti
+          details: All tests passed
+          severity: info
+          color: "green"
+          title: Build successful, deployment triggered
+      - name: Notify Failure
+        uses: rjstone/discord-webhook-notify@v2
+        if: failure()
+        with:
+          webhookUrl: ${{ secrets.WEBHOOK }}
+          username: robineisepoptahti
+          details: Tests failed
+          severity: info
+          color: "red"
+          title: Build failed
+
   tag_release:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-latest
