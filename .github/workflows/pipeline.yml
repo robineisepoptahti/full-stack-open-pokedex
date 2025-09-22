@@ -43,6 +43,9 @@ jobs:
           severity: info
           color: "green"
           title: Build successful, deployment triggered
+      - name: Debug Webhook URL
+        if: failure()
+        run: echo "Webhook URL found - ${{ secrets.WEBHOOK }}"
       - name: Notify Failure
         uses: rjstone/discord-webhook-notify@v2
         if: failure()
